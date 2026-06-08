@@ -1,6 +1,8 @@
 # Shift Tracker — Electron Tray App
-
-A system tray app that pops up your shift time tracker on click.
+A system tray app for tracking shift hours — built to solve a simple problem:
+my workday doesn't have a fixed end time, so I never knew exactly when I'd
+hit my hours for the day. This app lets me log my start time and see at a
+glance how much time is left in my shift, without breaking my workflow.
 
 ## Setup
 
