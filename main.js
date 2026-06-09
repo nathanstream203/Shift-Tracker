@@ -37,6 +37,10 @@ app.on("second-instance", () => {
 });
 
 app.whenReady().then(() => {
+  app.setLoginItemSettings({
+    openAtLogin: true,
+    openAsHidden: true, // start minimized to tray, no popup
+  });
   createTray();
   createWindow();
 });
