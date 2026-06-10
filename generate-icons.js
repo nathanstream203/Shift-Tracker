@@ -78,42 +78,15 @@ app.whenReady().then(async () => {
   fs.writeFileSync(path.join(__dirname, "assets", "trayIcon.png"), pngBuffers[32]);
   console.log("Wrote assets/trayIcon.png");
 
-  const icoBuffer = buildIco(
-    [pngBuffers[16], pngBuffers[32], pngBuffers[48], pngBuffers[256]],
-    [16, 32, 48, 256]
-  );
+  const { default: pngToIco } = await import("png-to-ico");
+  const icoBuffer = await pngToIco([
+    pngBuffers[16],
+    pngBuffers[32],
+    pngBuffers[48],
+    pngBuffers[256],
+  ]);
   fs.writeFileSync(path.join(__dirname, "assets", "icon.ico"), icoBuffer);
   console.log("Wrote assets/icon.ico");
 
   app.quit();
 });
-
-function buildIco(pngBuffers, sizes) {
-  const count = pngBuffers.length;
-  const headerSize = 6;
-  const dirEntrySize = 16;
-
-  let offset = headerSize + count * dirEntrySize;
-  const offsets = pngBuffers.map((buf) => { const o = offset; offset += buf.length; return o; });
-
-  const buf = Buffer.alloc(offset);
-  buf.writeUInt16LE(0, 0);
-  buf.writeUInt16LE(1, 2);
-  buf.writeUInt16LE(count, 4);
-
-  pngBuffers.forEach((png, i) => {
-    const base = headerSize + i * dirEntrySize;
-    const s = sizes[i];
-    buf.writeUInt8(s >= 256 ? 0 : s, base);
-    buf.writeUInt8(s >= 256 ? 0 : s, base + 1);
-    buf.writeUInt8(0, base + 2);
-    buf.writeUInt8(0, base + 3);
-    buf.writeUInt16LE(1, base + 4);
-    buf.writeUInt16LE(32, base + 6);
-    buf.writeUInt32LE(png.length, base + 8);
-    buf.writeUInt32LE(offsets[i], base + 12);
-    png.copy(buf, offsets[i]);
-  });
-
-  return buf;
-}

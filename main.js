@@ -2,11 +2,15 @@ const {
   app,
   BrowserWindow,
   Tray,
+  Menu,
   nativeImage,
   screen,
   ipcMain,
 } = require("electron");
+
+Menu.setApplicationMenu(null);
 const { truncate } = require("fs/promises");
+const { autoUpdater } = require("electron-updater");
 
 // Handle close button from renderer
 ipcMain.on("hide-window", () => {
@@ -50,10 +54,12 @@ app.on("second-instance", () => {
 app.whenReady().then(() => {
   app.setLoginItemSettings({
     openAtLogin: true,
-    openAsHidden: true, // start minimized to tray, no popup
+    openAsHidden: true,
   });
   createTray();
   createWindow();
+
+  autoUpdater.checkForUpdatesAndNotify();
 });
 
 // Prevent app from quitting when all windows are closed
@@ -98,7 +104,8 @@ function createWindow() {
     width: POPUP_WIDTH,
     height: POPUP_HEIGHT,
     show: true,
-    frame: true, // No titlebar — clean popup feel
+    frame: true,
+    autoHideMenuBar: true,
     resizable: false,
     movable: true,
     alwaysOnTop: true,
