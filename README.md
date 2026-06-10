@@ -1,20 +1,62 @@
-# Shift Tracker — Electron Tray App
-A system tray app for tracking shift hours — built to solve a simple problem:
-my workday doesn't have a fixed end time, so I never knew exactly when I'd
-hit my hours for the day. This app lets me log my start time and see at a
-glance how much time is left in my shift, without breaking my workflow.
+# Shift Tracker
+
+A system tray app for tracking shift hours. Log your clock-in time and see exactly when you can leave, accounting for your lunch break and a configurable paid-hours goal.
 
 ## Setup
 
 ```bash
-# 1. Install dependencies
 npm install
-
-# 2. Run in dev mode
 npm start
 ```
 
-The app icon will appear in your system tray/menu bar. Click it to toggle the popup open/closed. Click anywhere outside the popup to dismiss it. Right-click the tray icon for a menu with Quit.
+The app icon appears in your system tray. Click it to toggle the popup. Click anywhere outside to dismiss.
+
+## Features
+
+**Clock events**
+- Stamp your morning clock-in with "Now" or type a time manually
+- Start and end a lunch break with a single button (lunch time is excluded from paid hours)
+- Edit lunch start/end times directly via inline time inputs
+
+**Live session**
+- Running clock showing total paid time accumulated
+- Progress bar toward your paid-hours goal with percentage
+- Status indicator: "Clocked in" or "On lunch break"
+
+**Clock-out calculator**
+- Displays the time you need to leave to hit your goal
+- Updates in real time as you add or edit times
+- Shows a warning badge if no lunch has been entered
+- Tray icon tooltip updates to show your target clock-out time
+
+**Goal setting**
+- Configurable paid-hours target (default 8h, supports 0.5h increments)
+
+**Shift metrics**
+- Morning block duration
+- Lunch break duration
+- Afternoon time still needed
+- Total paid time so far
+
+**Reset and undo**
+- "Reset day" clears all entries
+- An "Undo" button appears for 8 seconds after a reset
+
+**Window behavior**
+- Pin button keeps the window visible when you click away
+- Auto-hides on blur when unpinned
+- Launches hidden to tray on login
+- Single instance: clicking the tray on a second launch focuses the existing window
+
+**Input validation**
+- Warns if lunch start is before clock-in or lunch end is before lunch start
+
+## Keyboard shortcuts
+
+| Shortcut | Action |
+|----------|--------|
+| Alt+1 | Stamp morning clock-in |
+| Alt+L | Toggle lunch start / end |
 
 ## Build a distributable
 
@@ -22,54 +64,30 @@ The app icon will appear in your system tray/menu bar. Click it to toggle the po
 npm run build
 ```
 
-Outputs to the `dist/` folder:
+Output goes to `dist/`:
 
-- **macOS** → `.dmg`
-- **Windows** → `.exe` installer (NSIS)
-- **Linux** → `.AppImage`
+- **Windows** `.exe` installer (NSIS)
+- **macOS** `.dmg`
+- **Linux** `.AppImage`
 
-## Replacing the tray icon
+## Custom icons
 
-The default icon is a placeholder. To use a custom icon:
+**Tray icon:** Replace `assets/trayIcon.png` (16x16 or 32x32, transparent background). On macOS use a black/white PNG so it adapts to light/dark menu bars.
 
-1. Open the assets folder
-2. Replace the `trayIcon.png` (16x16 or 32x32, transparent background) inside it with your choice
-   On macOS, use a black/white PNG and keep `setTemplateImage(true)` so it adapts to light/dark menu bars automatically.
+**App icon:** Replace `assets/icon.ico` with a multi-size `.ico` (16, 32, 48, 256px). Delete `dist/` and rebuild.
 
-## Replacing the app icon
-
-The default app icon is a placeholder. To use a custom icon:
-
-1. Create or export your icon image at 256x256px or larger (PNG works well as a source)
-2. Convert it to a `.ico` file containing multiple sizes (16, 32, 48, 256px)
-   - A free tool like [icoconvert.com](https://icoconvert.com) can do this from a PNG
-3. Name the file `icon.ico` and place it in the `assets/` folder
-4. Delete the `dist/` folder, then run `npm run build` to rebuild with the new icon
-
-> **Note:** Changes to the app icon won't appear on an already-installed shortcut.
-> Right-click the shortcut → Properties → Change Icon to refresh it manually, or reinstall the app.
-
-## Auto-launch on login (optional)
-
-Add this to `app.whenReady()` in `main.js`:
-
-```js
-app.setLoginItemSettings({
-  openAtLogin: true,
-  openAsHidden: true, // start minimized to tray, no popup
-});
-```
+> Icon changes on existing shortcuts require reinstalling or manually updating via Properties > Change Icon.
 
 ## Project structure
 
 ```
 shift-tracker-app/
-├── main.js          ← Electron main process (tray, window, IPC)
-├── preload.js       ← Context bridge (renderer ↔ main)
+├── main.js             Electron main process (tray, window, IPC)
+├── preload.js          Context bridge (renderer <-> main)
 ├── package.json
 ├── assets/
-    ├── trayIcon.png
-    ├── icon.ico
+│   ├── trayIcon.png
+│   └── icon.ico
 └── src/
     ├── time-tracker.html
     ├── time-tracker.css

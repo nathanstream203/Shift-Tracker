@@ -12,11 +12,22 @@ const { truncate } = require("fs/promises");
 ipcMain.on("hide-window", () => {
   if (win) win.hide();
 });
+
+ipcMain.on("update-tooltip", (event, text) => {
+  if (tray) tray.setToolTip(text || "Shift Tracker");
+});
+
+ipcMain.handle("toggle-pin", () => {
+  isPinned = !isPinned;
+  if (win) win.setAlwaysOnTop(isPinned);
+  return isPinned;
+});
 const path = require("path");
 
 // Keep global references so they aren't garbage collected
 let tray = null;
 let win = null;
+let isPinned = false;
 
 // Dimensions of the popup
 const POPUP_WIDTH = 480;
@@ -110,9 +121,9 @@ function createWindow() {
     }
   });
 
-  // Hide when focus is lost (clicked outside)
+  // Hide when focus is lost (clicked outside), unless pinned
   win.on("blur", () => {
-    if (win.isVisible()) {
+    if (!isPinned && win.isVisible()) {
       win.hide();
     }
   });

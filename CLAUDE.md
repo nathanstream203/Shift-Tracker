@@ -68,3 +68,9 @@ After every visual implementation:
 5. Repeat until the implementation is **90–95% visually accurate** to the reference before considering the task done
 
 Do not call a UI task complete without completing at least one screenshot comparison cycle.
+
+## README Rules
+
+### Writing new README
+
+Do not use any em-dashes or generic ai copywriting. Write clean, concise, and to the point.
