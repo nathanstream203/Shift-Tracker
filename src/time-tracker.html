@@ -1,95 +1,154 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Shift Time Tracker</title>
-  <link rel="stylesheet" href="time-tracker.css" />
-</head>
-<body>
-  <div class="page">
-    <header class="header">
-      <div class="header-inner">
-        <div class="header-brand">
-          <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10"/>
-            <polyline points="12 6 12 12 16 14"/>
-          </svg>
-          <span class="brand-name">Shift Tracker</span>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shift Tracker</title>
+    <link rel="stylesheet" href="time-tracker.css" />
+  </head>
+  <body>
+    <div class="page">
+      <header class="header">
+        <div class="header-inner">
+          <div class="header-brand">
+            <svg
+              class="brand-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 16 14" />
+            </svg>
+            <span class="brand-name">Shift Tracker</span>
+          </div>
+          <div class="header-actions">
+            <button
+              id="reset-btn"
+              onclick="resetAll()"
+              title="Clear today's data"
+            >
+              Reset day
+            </button>
+            <button
+              id="pin-btn"
+              onclick="togglePin()"
+              title="Pin window (keep visible)"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                width="13"
+                height="13"
+                fill="currentColor"
+              >
+                <path
+                  d="M16 9V4h1c.55 0 1-.45 1-1s-.45-1-1-1H7c-.55 0-1 .45-1 1s.45 1 1 1h1v5c0 1.66-1.34 3-3 3v2h5.97v7l1 1 1-1v-7H19v-2c-1.66 0-3-1.34-3-3z"
+                />
+              </svg>
+            </button>
+            <button
+              id="close-btn"
+              onclick="window.electronAPI?.closeWindow()"
+              title="Close"
+            >
+              ✕
+            </button>
+          </div>
         </div>
-        <div class="header-actions">
-          <button id="reset-btn" onclick="resetAll()" title="Clear today's data">Reset day</button>
-          <button id="close-btn" onclick="window.electronAPI?.closeWindow()" title="Close">✕</button>
-        </div>
-      </div>
-    </header>
+      </header>
 
-    <div id="live-area">
-      <div class="session-empty">
-        <div class="session-empty-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-          </svg>
+      <div id="live-area">
+        <div class="session-empty">
+          <div class="session-empty-icon">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 16 14" />
+            </svg>
+          </div>
+          <p class="session-empty-title">Not tracking</p>
+          <p class="session-empty-sub">
+            Stamp your morning clock-in time to start
+          </p>
         </div>
-        <p class="session-empty-title">Not tracking</p>
-        <p class="session-empty-sub">Stamp your morning clock-in time to start</p>
       </div>
+
+      <div class="card">
+        <p class="section-label">Clock Events</p>
+
+        <div class="time-row">
+          <div class="time-row-meta">
+            <span class="time-row-label">Morning clock-in</span>
+          </div>
+          <div class="input-group">
+            <button
+              class="stamp-btn"
+              id="stamp-in1"
+              onclick="stampNow('in1')"
+              title="Stamp current time (Alt+1)"
+            >
+              Now
+            </button>
+            <input type="time" id="in1" oninput="calc()" />
+            <button class="clear-btn" onclick="clearField('in1')" title="Clear">
+              ✕
+            </button>
+          </div>
+        </div>
+
+        <div class="time-row" style="margin-bottom: 0">
+          <div class="time-row-meta">
+            <span class="time-row-label">Lunch</span>
+            <span class="badge-unpaid">unpaid</span>
+          </div>
+          <div id="lunch-controls" class="lunch-controls"></div>
+        </div>
+
+        <input type="time" id="out1" oninput="calc()" style="display: none" />
+        <input type="time" id="in2" oninput="calc()" style="display: none" />
+      </div>
+
+      <div class="card goal-card">
+        <span class="time-row-label">Target paid hours</span>
+        <div class="goal-input-row">
+          <input
+            type="number"
+            id="goal"
+            value="8"
+            min="1"
+            max="24"
+            step="0.5"
+            oninput="calc()"
+          />
+          <span class="goal-unit">hrs</span>
+        </div>
+      </div>
+
+      <div id="result-area"></div>
     </div>
 
-    <div class="card">
-      <p class="section-label">Clock Events</p>
+    <script src="time-tracker.js"></script>
+    <script>
+      if (window.electronAPI) {
+        document.getElementById("close-btn").style.display = "flex";
+        document.getElementById("pin-btn").style.display = "flex";
+      }
 
-      <div class="time-row">
-        <div class="time-row-meta">
-          <span class="time-row-label">Morning clock-in</span>
-        </div>
-        <div class="input-group">
-          <button class="stamp-btn" onclick="stampNow('in1')" title="Stamp current time">Now</button>
-          <input type="time" id="in1" oninput="calc()" />
-          <button class="clear-btn" onclick="clearField('in1')" title="Clear">✕</button>
-        </div>
-      </div>
-
-      <div class="time-row">
-        <div class="time-row-meta">
-          <span class="time-row-label">Lunch clock-out</span>
-          <span class="badge-unpaid">unpaid</span>
-        </div>
-        <div class="input-group">
-          <button class="stamp-btn" onclick="stampNow('out1')" title="Stamp current time">Now</button>
-          <input type="time" id="out1" oninput="calc()" />
-          <button class="clear-btn" onclick="clearField('out1')" title="Clear">✕</button>
-        </div>
-      </div>
-
-      <div class="time-row" style="margin-bottom:0">
-        <div class="time-row-meta">
-          <span class="time-row-label">Lunch clock-in</span>
-        </div>
-        <div class="input-group">
-          <button class="stamp-btn" onclick="stampNow('in2')" title="Stamp current time">Now</button>
-          <input type="time" id="in2" oninput="calc()" />
-          <button class="clear-btn" onclick="clearField('in2')" title="Clear">✕</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="card goal-card">
-      <span class="time-row-label">Target paid hours</span>
-      <div class="goal-input-row">
-        <input type="number" id="goal" value="8" min="1" max="24" step="0.5" oninput="calc()" />
-        <span class="goal-unit">hrs</span>
-      </div>
-    </div>
-
-    <div id="result-area"></div>
-  </div>
-
-  <script src="time-tracker.js"></script>
-  <script>
-    if (window.electronAPI) {
-      document.getElementById('close-btn').style.display = 'flex';
-    }
-  </script>
-</body>
+      function togglePin() {
+        if (!window.electronAPI) return;
+        window.electronAPI.togglePin().then(function (pinned) {
+          var btn = document.getElementById("pin-btn");
+          btn.classList.toggle("pinned", pinned);
+          btn.title = pinned ? "Unpin window" : "Pin window (keep visible)";
+        });
+      }
+    </script>
+  </body>
 </html>

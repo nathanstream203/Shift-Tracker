@@ -149,6 +149,32 @@ body {
   border-color: var(--red);
 }
 
+#pin-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-family: inherit;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+
+#pin-btn:hover {
+  color: var(--teal);
+  border-color: var(--teal);
+}
+
+#pin-btn.pinned {
+  color: var(--teal);
+  border-color: var(--teal);
+  background: var(--teal-light);
+}
+
 /* ── Cards ── */
 .card {
   background: var(--bg-card);
@@ -420,6 +446,75 @@ input[type="number"]:focus {
 
 .stamp-btn:active {
   transform: scale(0.95);
+}
+
+.stamp-btn:disabled,
+.stamp-btn:disabled:hover {
+  opacity: 0.4;
+  cursor: not-allowed;
+  color: var(--text-secondary);
+  border-color: var(--border);
+  background: var(--bg-input);
+  transform: none;
+}
+
+/* Lunch toggle controls */
+.lunch-controls {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex: 1;
+  min-width: 0;
+}
+
+.lunch-time-input {
+  flex: 1;
+  min-width: 0;
+  height: 34px;
+  padding: 0 9px;
+  font-size: 13px;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--r-input);
+  color: var(--text-primary);
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.lunch-time-input:focus {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px rgba(12, 181, 164, 0.12);
+}
+
+.lunch-dash {
+  font-size: 13px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.stamp-btn.lunch-end {
+  color: var(--amber);
+  border-color: var(--amber);
+  background: var(--amber-light);
+}
+
+.stamp-btn.lunch-end:hover {
+  color: var(--amber);
+  border-color: var(--amber);
+  background: var(--amber-light);
+  filter: brightness(0.95);
+}
+
+/* Validation warning */
+.validation-warning {
+  font-size: 12px;
+  color: var(--red);
+  background: var(--red-light);
+  border: 1px solid var(--red);
+  border-radius: var(--r-btn);
+  padding: 6px 10px;
+  margin-bottom: 0.75rem;
 }
 
 .clear-btn {
