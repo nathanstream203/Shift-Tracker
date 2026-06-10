@@ -1,6 +1,6 @@
 {
   "name": "shift-tracker",
-  "version": "1.0.0",
+  "version": "1.1.1",
   "description": "Shift time tracker tray app",
   "main": "main.js",
   "scripts": {
@@ -12,7 +12,9 @@
     "appId": "com.nate.shift-tracker",
     "icon": "assets/icon",
     "productName": "Shift Tracker",
-    "electronLanguages": ["en-US"],
+    "electronLanguages": [
+      "en-US"
+    ],
     "directories": {
       "output": "dist"
     },
@@ -34,6 +36,12 @@
       "!generate-ico.js",
       "!generate-icons.js",
       "!**/*.map"
+    ],
+    "extraResources": [
+      {
+        "from": "assets/",
+        "to": "assets/"
+      }
     ],
     "publish": {
       "provider": "github",
